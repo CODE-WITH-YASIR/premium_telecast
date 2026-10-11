@@ -1,0 +1,10 @@
+{
+  "name": "Premium Live TV",
+  "short_name": "Live TV",
+  "description": "Watch live IPTV channels from around the world.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": []
+}
