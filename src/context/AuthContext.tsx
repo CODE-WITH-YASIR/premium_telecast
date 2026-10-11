@@ -66,8 +66,8 @@ const LOCAL_USER_KEY = "premium-live-tv:user-profile:v2";
 
 const DEFAULT_USER: AuthUser = {
   id: "usr_admin",
-  email: "admin@premiumtv.live",
-  name: "Administrator",
+  email: "mohamedyasir2000@gmail.com",
+  name: "Mohamed Yasir",
   role: "admin",
 };
 

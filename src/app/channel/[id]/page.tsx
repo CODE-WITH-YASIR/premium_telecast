@@ -2,7 +2,7 @@
 
 import { use, useEffect, useMemo, useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Share2, Radio } from "lucide-react";
+import { ArrowLeft, Share2, Radio, AlertTriangle, ShieldCheck, Zap, Sparkles } from "lucide-react";
 import { useChannel } from "@/hooks/useChannel";
 import { useChannels } from "@/hooks/useChannels";
 import { useHistory } from "@/hooks/useHistory";
@@ -37,6 +37,12 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
       void recordWatch(channel.id, channel.name, channel.logo);
     }
   }, [channel, recordWatch]);
+
+  const isMixedContent = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    if (window.location.protocol !== "https:") return false;
+    return channel?.streamUrl?.startsWith("http://") ?? false;
+  }, [channel]);
 
   const [shared, setShared] = useState(false);
   const handleShare = useCallback(async () => {
@@ -82,39 +88,64 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
   const meta = [channel.group, channel.country, channel.language].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+    <div className="mx-auto max-w-6xl px-3 py-6 sm:px-6 sm:py-8 pb-24">
       <Link
         href="/live"
-        className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white transition"
+        className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white/50 hover:text-white transition"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        Back to Live TV
+        <span>Back to Live TV</span>
       </Link>
 
       {/* Main Cinematic Video Player */}
-      <div className="overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
+      <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-2xl">
         <VideoPlayer streamUrl={channel.streamUrl} title={channel.name} />
       </div>
+
+      {/* Mixed Content Warning Alert Banner */}
+      {isMixedContent && (
+        <div className="mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3.5 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-amber-300">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            <span>
+              This stream uses unencrypted HTTP and may be blocked by modern browser HTTPS security.
+            </span>
+          </div>
+          <Link
+            href="/live"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-amber-400 px-3.5 py-1.5 font-bold text-black hover:bg-amber-300 transition shrink-0"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Browse Secure HTTPS Channels</span>
+          </Link>
+        </div>
+      )}
 
       {/* Channel Information Header Bar */}
       <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6 backdrop-blur-xl shadow-xl">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-2.5 shadow-inner">
+            <div className="flex h-15 w-15 sm:h-17 sm:w-17 shrink-0 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.04] p-2.5 shadow-inner">
               <ChannelLogo
                 src={channel.logo}
                 alt={`${channel.name} logo`}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain filter drop-shadow-md"
               />
             </div>
             <div>
-              <div className="mb-1.5 flex items-center gap-2.5">
+              <div className="mb-1.5 flex flex-wrap items-center gap-2">
                 <LiveBadge size="sm" />
-                <span className="text-xs font-mono text-emerald-400 font-semibold tracking-wider">
+                <span className="text-xs font-mono text-emerald-400 font-bold tracking-wider">
                   BROADCASTING
                 </span>
+                {channel.streamUrl.startsWith("https://") && (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.2 text-[9px] font-bold text-emerald-400">
+                    <ShieldCheck className="h-2.5 w-2.5" />
+                    HTTPS SECURE
+                  </span>
+                )}
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
                 {channel.name}
               </h1>
               {meta.length > 0 && (
@@ -125,18 +156,18 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <FavoriteButton
               channelId={channel.id}
               channelName={channel.name}
               variant="full"
-              className="border-white/15 bg-white/[0.06] hover:bg-white/10 text-xs py-2 px-3.5"
+              className="border-white/15 bg-white/[0.06] hover:bg-white/10 text-xs py-2 px-4 font-semibold"
             />
             <button
               type="button"
               onClick={handleShare}
               aria-label="Share channel link"
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/[0.08]"
+              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/[0.08]"
             >
               <Share2 className="h-3.5 w-3.5" />
               <span>{shared ? "Copied Link!" : "Share"}</span>
@@ -147,13 +178,13 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
         {/* Program Schedule & Broadcast Info */}
         <div className="mt-6 border-t border-white/10 pt-5">
           <div className="flex items-center gap-2">
-            <Radio className="h-3.5 w-3.5 text-primary" />
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-white/60">
-              Live Broadcast Information
+            <Radio className="h-4 w-4 text-primary" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-white/70">
+              Live Broadcast Telemetry
             </h2>
           </div>
           <p className="mt-1.5 text-xs text-white/60 leading-relaxed">
-            Real-time television broadcast stream active. Adaptive bitrate streaming enables continuous playback based on your device network bandwidth.
+            Real-time television broadcast stream active. Adaptive bitrate streaming enables continuous playback based on your device network bandwidth with hardware acceleration.
           </p>
         </div>
       </div>
