@@ -3,115 +3,159 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Radio, Shield, Mail, Lock, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Radio, Shield, Mail, Lock, Sparkles, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import type { Metadata } from "next";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
+    if (!email) { setError("Email is required."); return; }
+    setError("");
     setLoading(true);
-    await login(email, password);
-    setLoading(false);
-    router.push("/profile");
+    try {
+      await login(email, password);
+      router.push("/profile");
+    } catch {
+      setError("Could not sign in. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleAdminQuickLogin() {
     setLoading(true);
-    await login("mohamedyasir2000@gmail.com");
-    setLoading(false);
-    router.push("/profile");
+    try {
+      await login("mohamedyasir2000@gmail.com");
+      router.push("/profile");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleGoogleLogin() {
     setLoading(true);
-    await loginWithGoogle();
-    setLoading(false);
-    router.push("/profile");
+    try {
+      await loginWithGoogle();
+      router.push("/profile");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-140px)] max-w-md flex-col justify-center px-4 py-12 sm:px-6">
-      <div className="overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-[#0a0d16]/95 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl">
-        {/* Header Icon */}
+    <div className="mx-auto flex min-h-[calc(100svh-80px)] max-w-md flex-col justify-center px-4 py-10 sm:px-6 pb-24">
+      <div className="overflow-hidden rounded-3xl border border-white/12 bg-gradient-to-b from-white/[0.07] via-white/[0.025] to-[#0a0d16]/95 p-7 sm:p-9 backdrop-blur-2xl shadow-2xl">
+
+        {/* Logo */}
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary via-orange-500 to-amber-400 p-0.5 shadow-xl shadow-primary/20">
-            <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#07090f]">
-              <Radio className="h-6 w-6 text-primary animate-pulse" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-[var(--primary)] via-orange-500 to-amber-400 p-0.5 shadow-xl shadow-[var(--primary-glow)]">
+            <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[var(--bg-raised)]">
+              <Radio className="h-6 w-6 text-[var(--primary)] animate-pulse" />
             </div>
           </div>
-          <h1 className="mt-4 text-2xl font-black tracking-tight text-white sm:text-3xl">
-            Welcome to Premium TV
+          <h1 className="mt-5 text-2xl font-black tracking-tight text-white sm:text-3xl">
+            Welcome back
           </h1>
-          <p className="mt-1 text-xs text-white/60">
-            Sign in to sync your saved bookmarks, watch telemetry, and preferences.
+          <p className="mt-2 text-sm text-[var(--text-tertiary)] leading-relaxed max-w-xs">
+            Sign in to sync your saved channels, watch history, and preferences.
           </p>
         </div>
 
-        {/* Quick Admin Access Preset */}
-        <div className="mt-6">
+        {/* Quick Admin Access */}
+        <div className="mt-7">
           <button
             type="button"
             onClick={handleAdminQuickLogin}
-            className="w-full flex items-center justify-between rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 transition shadow-sm"
+            disabled={loading}
+            className="w-full flex items-center justify-between rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-3.5 text-sm font-semibold text-cyan-300 hover:bg-cyan-500/18 transition-all disabled:opacity-50"
           >
-            <div className="flex items-center gap-2.5">
-              <Shield className="h-4 w-4" />
+            <div className="flex items-center gap-3">
+              <Shield className="h-4.5 w-4.5 shrink-0" />
               <span>One-Click Sign In (Administrator)</span>
             </div>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 shrink-0" />
           </button>
         </div>
 
-        <div className="relative my-6 flex items-center">
-          <div className="flex-grow border-t border-white/10" />
-          <span className="mx-3 text-[11px] font-mono uppercase text-white/40">or continue with email</span>
-          <div className="flex-grow border-t border-white/10" />
+        <div className="relative my-7 flex items-center gap-3">
+          <div className="flex-grow border-t border-[var(--border-subtle)]" />
+          <span className="text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider whitespace-nowrap">
+            or continue with email
+          </span>
+          <div className="flex-grow border-t border-[var(--border-subtle)]" />
         </div>
 
+        {/* Error message */}
+        {error && (
+          <div role="alert" className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
         {/* Standard Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Email address</label>
+            <label htmlFor="login-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              Email address
+            </label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-white/40" />
+              <Mail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-disabled)]" aria-hidden="true" />
               <input
+                id="login-email"
                 type="email"
                 required
+                autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setError(""); }}
                 placeholder="you@domain.com"
-                className="w-full rounded-xl border border-white/12 bg-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                className="input input-icon-left"
+                aria-required="true"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Password (Optional for local session)</label>
+            <label htmlFor="login-password" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              Password
+              <span className="ml-2 text-xs text-[var(--text-disabled)]">(optional for local session)</span>
+            </label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-white/40" />
+              <Lock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-disabled)]" aria-hidden="true" />
               <input
-                type="password"
+                id="login-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-white/12 bg-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                className="input input-icon-left input-icon-right"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-lg text-[var(--text-disabled)] hover:text-[var(--text-secondary)] transition"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-orange-500 px-4 py-3 text-xs font-bold text-black hover:brightness-110 transition shadow-lg shadow-primary/25 disabled:opacity-50"
+            disabled={loading || !email}
+            className="btn btn-primary w-full mt-2"
           >
-            <span>{loading ? "Signing in…" : "Sign In & Stream"}</span>
+            {loading ? "Signing in…" : "Sign In & Stream"}
           </button>
         </form>
 
@@ -119,16 +163,17 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+            disabled={loading}
+            className="btn btn-ghost w-full"
           >
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+            <Sparkles className="h-4 w-4 text-amber-400" />
             <span>Continue as Google VIP</span>
           </button>
         </div>
 
-        <p className="mt-6 text-center text-xs text-white/50">
+        <p className="mt-7 text-center text-sm text-[var(--text-tertiary)]">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-bold text-primary hover:underline">
+          <Link href="/signup" className="font-semibold text-[var(--primary)] hover:underline">
             Create an account
           </Link>
         </p>

@@ -54,14 +54,14 @@ export default function SearchPage() {
   const isLoading = globalLoading && tamilLoading;
 
   return (
-    <div className="mx-auto max-w-[1600px] px-3 py-6 sm:px-6 sm:py-8">
+    <div className="page-container pt-6 sm:pt-8">
       <div className="mb-6">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-3 py-1 text-xs font-bold text-[var(--primary)]">
           <Sparkles className="h-3.5 w-3.5" />
           <span>Unified Live Stream Search</span>
         </div>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Search Live Channels</h1>
-        <p className="mt-1 text-xs text-white/60">
+        <p className="mt-1 text-xs text-[var(--text-tertiary)]">
           Search all verified Tamil Live TV broadcasts and over 11,000 global channels instantly.
         </p>
       </div>

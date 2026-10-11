@@ -90,24 +90,28 @@ export default function ProfilePage() {
               <h2 className="text-base font-bold text-white">Viewer Preferences</h2>
             </div>
 
-            <div className="space-y-4 text-xs">
+            <div className="space-y-5">
               <div>
-                <label className="block text-white/70 font-semibold mb-1.5">Display Name</label>
+                <label htmlFor="profile-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Display Name</label>
                 <input
+                  id="profile-name"
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full rounded-xl border border-white/12 bg-white/[0.04] px-3.5 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                  className="input"
+                  autoComplete="name"
                 />
               </div>
 
               <div>
-                <label className="block text-white/70 font-semibold mb-1.5">Email / Account Identifier</label>
+                <label htmlFor="profile-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Email / Account Identifier</label>
                 <input
+                  id="profile-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-white/12 bg-white/[0.04] px-3.5 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                  className="input"
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -117,7 +121,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-orange-500 px-5 py-2.5 text-xs font-bold text-black hover:brightness-110 transition shadow-lg shadow-primary/25 disabled:opacity-50"
+              className="btn btn-primary btn-sm"
             >
               <Save className="h-3.5 w-3.5" />
               <span>{saving ? "Saving…" : "Save Changes"}</span>

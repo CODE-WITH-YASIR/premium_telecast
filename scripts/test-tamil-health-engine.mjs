@@ -58,7 +58,8 @@ export function parseTamilM3U(rawText) {
         .replace(/\s*\(.*?\)/g, "")
         .trim();
 
-      const resMatch = (rawName + " " + line).match(/\b(1080p|720p|576p|480p|360p|4k|uhd|fhd|hd|sd)\b/i);
+      const explicitRes = rawName.match(/\((\d{3,4}[pi])\)/i) || rawName.match(/\[(\d{3,4}[pi])\]/i);
+      const resMatch = explicitRes || (rawName + " " + line).match(/\b(1080p|720p|576p|480p|360p|4k|uhd|fhd|hd|sd)\b/i);
       const resolution = resMatch ? resMatch[1].toLowerCase() : null;
       const isGeoBlockedNote = line.toLowerCase().includes("geo-block");
 

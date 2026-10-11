@@ -170,10 +170,10 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6">
+    <div className="page-container pt-8">
       <Link
         href="/profile"
-        className="mb-6 inline-flex items-center gap-2 text-xs font-medium text-white/60 hover:text-white"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[var(--text-tertiary)] hover:text-white transition"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Profile

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Radio, Shield, Mail, Lock, User, Sparkles } from "lucide-react";
+import { Radio, Mail, Lock, User, Sparkles, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function SignupPage() {
@@ -12,92 +12,135 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
+    if (!name.trim()) { setError("Display name is required."); return; }
+    if (!email) { setError("Email is required."); return; }
+    setError("");
     setLoading(true);
-    await signup(email, password, name);
-    setLoading(false);
-    router.push("/profile");
+    try {
+      await signup(email, password, name);
+      router.push("/profile");
+    } catch {
+      setError("Could not create account. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleGoogleLogin() {
     setLoading(true);
-    await loginWithGoogle();
-    setLoading(false);
-    router.push("/profile");
+    try {
+      await loginWithGoogle();
+      router.push("/profile");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-140px)] max-w-md flex-col justify-center px-4 py-12 sm:px-6">
-      <div className="overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-[#0a0d16]/95 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl">
+    <div className="mx-auto flex min-h-[calc(100svh-80px)] max-w-md flex-col justify-center px-4 py-10 sm:px-6 pb-24">
+      <div className="overflow-hidden rounded-3xl border border-white/12 bg-gradient-to-b from-white/[0.07] via-white/[0.025] to-[#0a0d16]/95 p-7 sm:p-9 backdrop-blur-2xl shadow-2xl">
+
+        {/* Logo */}
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary via-orange-500 to-amber-400 p-0.5 shadow-xl shadow-primary/20">
-            <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#07090f]">
-              <Radio className="h-6 w-6 text-primary animate-pulse" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-[var(--primary)] via-orange-500 to-amber-400 p-0.5 shadow-xl shadow-[var(--primary-glow)]">
+            <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[var(--bg-raised)]">
+              <Radio className="h-6 w-6 text-[var(--primary)] animate-pulse" />
             </div>
           </div>
-          <h1 className="mt-4 text-2xl font-black tracking-tight text-white sm:text-3xl">
-            Create Account
+          <h1 className="mt-5 text-2xl font-black tracking-tight text-white sm:text-3xl">
+            Create your account
           </h1>
-          <p className="mt-1 text-xs text-white/60">
+          <p className="mt-2 text-sm text-[var(--text-tertiary)] leading-relaxed max-w-xs">
             Get your personalized live television streaming workspace.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        {/* Error message */}
+        {error && (
+          <div role="alert" className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-7 space-y-5" noValidate>
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Display name</label>
+            <label htmlFor="signup-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              Display name <span className="text-[var(--primary)]" aria-hidden="true">*</span>
+            </label>
             <div className="relative">
-              <User className="absolute left-3.5 top-3 h-4 w-4 text-white/40" />
+              <User className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-disabled)]" aria-hidden="true" />
               <input
+                id="signup-name"
                 type="text"
                 required
+                autoComplete="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); setError(""); }}
                 placeholder="Your Name"
-                className="w-full rounded-xl border border-white/12 bg-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                className="input input-icon-left"
+                aria-required="true"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Email address</label>
+            <label htmlFor="signup-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              Email address <span className="text-[var(--primary)]" aria-hidden="true">*</span>
+            </label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-white/40" />
+              <Mail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-disabled)]" aria-hidden="true" />
               <input
+                id="signup-email"
                 type="email"
                 required
+                autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setError(""); }}
                 placeholder="you@domain.com"
-                className="w-full rounded-xl border border-white/12 bg-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                className="input input-icon-left"
+                aria-required="true"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Password</label>
+            <label htmlFor="signup-password" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              Password
+            </label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-white/40" />
+              <Lock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-disabled)]" aria-hidden="true" />
               <input
-                type="password"
+                id="signup-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full rounded-xl border border-white/12 bg-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-primary/60 focus:outline-none"
+                placeholder="Create a password"
+                className="input input-icon-left input-icon-right"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-lg text-[var(--text-disabled)] hover:text-[var(--text-secondary)] transition"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-orange-500 px-4 py-3 text-xs font-bold text-black hover:brightness-110 transition shadow-lg shadow-primary/25 disabled:opacity-50"
+            disabled={loading || !name || !email}
+            className="btn btn-primary w-full"
           >
-            <span>{loading ? "Creating account…" : "Create & Start Streaming"}</span>
+            {loading ? "Creating account…" : "Create & Start Streaming"}
           </button>
         </form>
 
@@ -105,16 +148,17 @@ export default function SignupPage() {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs font-semibold text-white/80 hover:bg-white/[0.08] hover:text-white transition"
+            disabled={loading}
+            className="btn btn-ghost w-full"
           >
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+            <Sparkles className="h-4 w-4 text-amber-400" />
             <span>Continue with Google</span>
           </button>
         </div>
 
-        <p className="mt-6 text-center text-xs text-white/50">
+        <p className="mt-7 text-center text-sm text-[var(--text-tertiary)]">
           Already have an account?{" "}
-          <Link href="/login" className="font-bold text-primary hover:underline">
+          <Link href="/login" className="font-semibold text-[var(--primary)] hover:underline">
             Sign In
           </Link>
         </p>

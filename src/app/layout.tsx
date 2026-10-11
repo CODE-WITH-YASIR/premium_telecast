@@ -25,11 +25,18 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-[#060709] font-sans text-white antialiased selection:bg-primary/30">
+      <body className="min-h-screen font-sans antialiased" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }}>
         <ToastProvider>
           <AuthProvider>
             <Header />
-            <main>{children}</main>
+            {/* Skip-nav link for keyboard/screen reader users */}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-xl focus:bg-[var(--primary)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black focus:shadow-lg"
+            >
+              Skip to main content
+            </a>
+            <main id="main-content" tabIndex={-1}>{children}</main>
           </AuthProvider>
         </ToastProvider>
       </body>

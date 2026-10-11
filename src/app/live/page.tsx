@@ -136,7 +136,7 @@ function LivePageContent() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-[1680px] px-4 py-8 sm:px-6">
+      <div className="page-container pt-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <Skeleton className="aspect-video w-full rounded-3xl" />
@@ -154,7 +154,7 @@ function LivePageContent() {
 
   if (error && channels.length === 0) {
     return (
-      <div className="mx-auto max-w-[1680px] px-4 py-16 sm:px-6">
+      <div className="page-container pt-16">
         <ErrorState
           title="Unable to load Live TV"
           description={error}
@@ -165,11 +165,11 @@ function LivePageContent() {
   }
 
   return (
-    <div className="mx-auto max-w-[1680px] px-3 py-6 sm:px-6 sm:py-8 pb-24">
+    <div className="page-container pt-6 sm:pt-8">
       {/* Top Title & Telemetry Header */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary/30 to-orange-500/20 text-primary border border-primary/40 shadow-md">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[var(--primary)]/30 to-orange-500/20 text-[var(--primary)] border border-[var(--primary)]/40 shadow-md">
             <Radio className="h-4.5 w-4.5 animate-pulse" />
           </div>
           <div>

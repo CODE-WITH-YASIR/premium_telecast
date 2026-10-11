@@ -28,10 +28,10 @@ function ChannelCardInner({ channel, onSelect, active }: ChannelCardProps) {
           <LiveBadge size="sm" />
         </div>
 
-        {/* Stream quality indicator pill */}
+        {/* Stream quality indicator — derived from channel name if available */}
         <div className="absolute right-2.5 top-2.5 flex items-center gap-1 z-10">
-          <span className="rounded-md bg-black/65 px-1.5 py-0.5 text-[9px] font-bold text-white/80 font-mono backdrop-blur-md border border-white/10">
-            HD
+          <span className="rounded-md bg-black/65 px-1.5 py-0.5 text-[9px] font-bold text-white/85 font-mono backdrop-blur-md border border-white/10">
+            {channel.name.includes("1080") ? "1080p" : channel.name.includes("720") ? "720p" : channel.name.includes("576") ? "576p" : channel.name.includes("480") ? "480p" : "HD"}
           </span>
         </div>
 

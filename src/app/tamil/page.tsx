@@ -57,7 +57,7 @@ export default function TamilTvPage() {
   const featured = useMemo(() => channels[0] || null, [channels]);
 
   return (
-    <div className="mx-auto max-w-[1600px] px-3 py-4 sm:px-6 sm:py-8">
+    <div className="page-container pt-4 sm:pt-8">
       {/* Header Banner */}
       <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-tr from-[#0b101b] via-[#090b10] to-[#14120a] p-4 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-2xl">
         <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />

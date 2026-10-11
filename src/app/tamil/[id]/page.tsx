@@ -121,7 +121,7 @@ export default function TamilChannelDetailPage({
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="page-container max-w-6xl pt-8">
         <Skeleton className="mb-6 aspect-video w-full rounded-3xl" />
         <Skeleton className="mb-3 h-8 w-1/2" />
         <Skeleton className="h-4 w-1/4" />
@@ -131,7 +131,7 @@ export default function TamilChannelDetailPage({
 
   if (notFound || !channel) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+      <div className="page-container max-w-4xl pt-16">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-12 backdrop-blur-xl">
           <EmptyState
             icon={Tv}
@@ -145,10 +145,10 @@ export default function TamilChannelDetailPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-3 py-3 sm:px-6 sm:py-6">
+    <div className="page-container max-w-6xl pt-4 sm:pt-6">
       <Link
         href="/tamil"
-        className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-white/60 hover:text-white transition active:scale-95"
+        className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-white transition active:scale-95"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         <span>Back to Tamil Live TV</span>

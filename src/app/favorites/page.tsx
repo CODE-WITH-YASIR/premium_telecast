@@ -33,10 +33,10 @@ export default function FavoritesPage() {
   }, [favoriteChannels, filterQuery]);
 
   return (
-    <div className="mx-auto max-w-[1680px] px-3 py-6 sm:px-6 sm:py-8 pb-24">
+    <div className="page-container pt-6 sm:pt-8">
       <Link
         href="/live"
-        className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white/50 hover:text-white transition"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-white transition"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         <span>Back to Live TV</span>
@@ -51,7 +51,7 @@ export default function FavoritesPage() {
             <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
               {isAuthenticated ? `${user?.name}’s Favorites` : "Your Favorite Channels"}
             </h1>
-            <p className="text-xs text-white/60 mt-0.5">
+            <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
               {favoriteChannels.length} channel{favoriteChannels.length === 1 ? "" : "s"} saved for instant one-click streaming
             </p>
           </div>
@@ -59,7 +59,7 @@ export default function FavoritesPage() {
 
         {/* Telemetry Status Badge */}
         <div className="flex items-center gap-2">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold text-white/75 backdrop-blur-xl">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border-default)] bg-[var(--glass-base)] px-4 py-1.5 text-xs font-semibold text-[var(--text-secondary)] backdrop-blur-xl">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>{isAuthenticated ? `Account: ${user?.email}` : "Saved Locally (Zero Cloud Lag)"}</span>
           </div>
@@ -69,18 +69,20 @@ export default function FavoritesPage() {
       {/* Quick Search within Favorites (if user has > 4 channels) */}
       {favoriteChannels.length > 4 && (
         <div className="mb-6 relative max-w-sm">
-          <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-white/40" />
+          <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-[var(--text-disabled)]" />
           <input
             type="text"
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
             placeholder="Search saved channels…"
-            className="w-full rounded-xl border border-white/10 bg-white/[0.04] pl-9 pr-8 py-2 text-xs text-white placeholder:text-white/40 focus:border-primary/60 focus:outline-none"
+            aria-label="Search saved channels"
+            className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--glass-base)] pl-9 pr-8 py-2 text-xs text-white placeholder:text-[var(--text-disabled)] focus:border-[var(--primary)] focus:outline-none"
           />
           {filterQuery && (
             <button
               type="button"
               onClick={() => setFilterQuery("")}
+              aria-label="Clear search query"
               className="absolute right-2.5 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-white/50 hover:bg-white/20 hover:text-white transition"
             >
               <X className="h-3 w-3" />

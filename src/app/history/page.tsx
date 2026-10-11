@@ -13,10 +13,10 @@ export default function HistoryPage() {
   const { user, isAuthenticated } = useAuth();
 
   return (
-    <div className="mx-auto max-w-4xl px-3 py-6 sm:px-6 sm:py-8 pb-24">
+    <div className="page-container max-w-4xl pt-6 sm:pt-8">
       <Link
         href="/live"
-        className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white/50 hover:text-white transition"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-white transition"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         <span>Back to Live TV</span>
@@ -31,7 +31,7 @@ export default function HistoryPage() {
             <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
               {isAuthenticated ? `${user?.name}’s Watch History` : "Watch History"}
             </h1>
-            <p className="text-xs text-white/60 mt-0.5">
+            <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
               {entries.length} recently tuned broadcast{entries.length === 1 ? "" : "s"}
             </p>
           </div>

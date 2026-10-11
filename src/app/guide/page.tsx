@@ -87,18 +87,18 @@ export default function GuidePage() {
   const displayChannels = useMemo(() => filteredChannels.slice(0, 80), [filteredChannels]);
 
   return (
-    <div className="mx-auto max-w-[1680px] px-3 py-6 sm:px-6 sm:py-8 pb-24">
+    <div className="page-container pt-6 sm:pt-8">
       {/* Header & Title Banner */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-3.5 py-1 text-xs font-bold text-[var(--primary)]">
             <ListVideo className="h-3.5 w-3.5" />
             <span>Interactive Broadcast Guide</span>
           </div>
           <h1 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-4xl">
             Electronic Program Guide (EPG)
           </h1>
-          <p className="mt-1 text-xs text-white/60">
+          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
             Real-time station timeline and global television directory.
           </p>
         </div>

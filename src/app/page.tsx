@@ -129,7 +129,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="pb-24">
+    <div className="pb-6">
       <Hero channel={featured} />
 
       {/* Broadcast Telemetry Strip */}
@@ -170,7 +170,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-[1680px] flex-col gap-12 px-4 py-10 sm:px-6">
+      <div className="page-container flex flex-col gap-12 pt-8">
 
         {/* Recently Watched / Continue Watching */}
         {recentChannels.length > 0 && (

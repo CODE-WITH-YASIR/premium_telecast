@@ -63,7 +63,7 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="page-container max-w-6xl pt-8">
         <Skeleton className="mb-6 aspect-video w-full rounded-3xl" />
         <Skeleton className="mb-3 h-8 w-1/2" />
         <Skeleton className="h-4 w-1/4" />
@@ -73,7 +73,7 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
 
   if (notFound || !channel) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+      <div className="page-container max-w-4xl pt-16">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-12 backdrop-blur-xl">
           <EmptyState
             title="Channel not found"
@@ -88,10 +88,10 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
   const meta = [channel.group, channel.country, channel.language].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-6xl px-3 py-6 sm:px-6 sm:py-8 pb-24">
+    <div className="page-container max-w-6xl pt-6 sm:pt-8">
       <Link
         href="/live"
-        className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-white/50 hover:text-white transition"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-white transition"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         <span>Back to Live TV</span>
