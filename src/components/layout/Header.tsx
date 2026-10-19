@@ -16,6 +16,7 @@ import {
   ChevronDown,
   Sparkles,
   Tv,
+  Baby,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -25,6 +26,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/live", label: "Live TV" },
   { href: "/tamil", label: "Tamil TV", badge: "VERIFIED" },
+  { href: "/kids", label: "Kids TV" },
   { href: "/guide", label: "Guide" },
   { href: "/favorites", label: "Favorites" },
   { href: "/history", label: "History" },
@@ -92,7 +94,10 @@ export function Header() {
           {/* Desktop Navigation Links */}
           <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">
             {NAV_LINKS.map((link) => {
-              const active = pathname === link.href;
+              const active =
+                link.href === "/kids"
+                  ? pathname === "/kids" || pathname === "/tamil-kids"
+                  : pathname === link.href;
               return (
                 <Link
                   key={link.href}
@@ -257,6 +262,8 @@ export function Header() {
               { href: "/", label: "Home", icon: Radio },
               { href: "/live", label: "Live TV", icon: Tv },
               { href: "/tamil", label: "Tamil Live TV (Verified)", icon: Sparkles },
+              { href: "/kids", label: "Kids TV", icon: Baby },
+              { href: "/tamil-kids", label: "Tamil Kids", icon: Baby },
               { href: "/guide", label: "Program Guide & EPG", icon: ListVideo },
               { href: "/favorites", label: "Favorites", icon: Heart, count: favorites.length },
               { href: "/history", label: "Watch History", icon: History, count: history.length },
@@ -325,14 +332,14 @@ export function Header() {
           <span>Tamil</span>
         </Link>
         <Link
-          href="/guide"
+          href="/kids"
           className={cn(
             "flex flex-col items-center gap-1 px-3 py-1 text-[10px] font-medium transition",
-            pathname === "/guide" ? "text-primary font-bold" : "text-white/50 hover:text-white"
+            pathname === "/kids" || pathname === "/tamil-kids" ? "text-purple-400 font-bold" : "text-white/50 hover:text-white"
           )}
         >
-          <ListVideo className="h-4.5 w-4.5" />
-          <span>Guide</span>
+          <Baby className="h-4.5 w-4.5" />
+          <span>Kids</span>
         </Link>
         <Link
           href="/favorites"

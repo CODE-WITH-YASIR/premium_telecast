@@ -6,7 +6,7 @@ import { useTamilChannels } from "@/hooks/useTamilChannels";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useHistory } from "@/hooks/useHistory";
 import { useAuth } from "@/context/AuthContext";
-import { getCategories, getCountries, getLanguages } from "@/lib/iptv/selectors";
+import { getCategories, getCountries, getLanguages, filterKidsChannels, filterTamilKidsChannels } from "@/lib/iptv/selectors";
 import { Hero } from "@/components/home/Hero";
 import { SectionHeading, ChannelRail, FacetPills } from "@/components/home/Sections";
 import { TamilChannelCard } from "@/components/tamil/TamilChannelCard";
@@ -88,6 +88,16 @@ export default function HomePage() {
       channels
         .filter((c) => c.group?.toLowerCase().includes("music"))
         .slice(0, 20),
+    [channels]
+  );
+
+  const kidsChannels = useMemo(
+    () => filterKidsChannels(channels).slice(0, 24),
+    [channels]
+  );
+
+  const tamilKidsChannels = useMemo(
+    () => filterTamilKidsChannels(channels).slice(0, 18),
     [channels]
   );
 
@@ -214,6 +224,31 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
+          </section>
+        )}
+
+        {/* Kids Channels Rail */}
+        {kidsChannels.length > 0 && (
+          <section>
+            <SectionHeading
+              title="Kids & Cartoons"
+              subtitle="Children's channels including POGO, Cartoon Network, Nick, Sony YAY, Chutti TV and more"
+              href="/kids"
+              badge="NEW"
+            />
+            <ChannelRail channels={kidsChannels} />
+          </section>
+        )}
+
+        {/* Tamil Kids Rail */}
+        {tamilKidsChannels.length > 0 && (
+          <section>
+            <SectionHeading
+              title="Tamil Kids TV"
+              subtitle="Children's content sourced from Tamil-language and Indian streams"
+              href="/tamil-kids"
+            />
+            <ChannelRail channels={tamilKidsChannels} />
           </section>
         )}
 

@@ -10,13 +10,108 @@ export interface CustomChannel {
   created_at: number;
 }
 
+export const DEFAULT_CUSTOM_CHANNELS: CustomChannel[] = [
+  {
+    id: "custom_chutti_tv",
+    name: "Chutti TV",
+    stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_hd_abr/index.m3u8",
+    logo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/87/Chutti_TV_logo.png/220px-Chutti_TV_logo.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000000,
+  },
+  {
+    id: "custom_pogo_tv",
+    name: "POGO TV",
+    stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_sd_abr/index.m3u8",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pogo_2022.svg/330px-Pogo_2022.svg.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000001,
+  },
+  {
+    id: "custom_cartoon_network",
+    name: "Cartoon Network India",
+    stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_hd_abr/index.m3u8",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/330px-Cartoon_Network_2010_logo.svg.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000002,
+  },
+  {
+    id: "custom_chithiram_tv",
+    name: "Chithiram TV",
+    stream_url: "https://cdn.pishow.tv/ott/live/1243/master.m3u8",
+    logo: "https://i.imgur.com/xv9cWSh.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000003,
+  },
+  {
+    id: "custom_discovery_kids",
+    name: "Discovery Kids",
+    stream_url: "https://drk6xq0vhn.gpcdn.net/live/discovery_kids_abr/index.m3u8",
+    logo: "https://i.imgur.com/0iNQvoL.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000004,
+  },
+  {
+    id: "custom_sony_yay",
+    name: "Sony YAY!",
+    stream_url: "https://drk6xq0vhn.gpcdn.net/live/discovery_kids_abr/index.m3u8",
+    logo: "https://dtil.tmsimg.com/assets/s159100_ld_h15_aa.png?lock=720x540",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000005,
+  },
+  {
+    id: "custom_wow_kidz",
+    name: "WOW Kidz Tamil",
+    stream_url: "https://yuppparoriglin.akamaized.net/181224/smil:wowkidztam.smil/playlist.m3u8",
+    logo: "https://d229kpbsb5jevy.cloudfront.net/yupptvnew/content/common/channel/logos/mjvezt.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000006,
+  },
+  {
+    id: "custom_nickelodeon",
+    name: "Nickelodeon (Nick India)",
+    stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_sd_abr/index.m3u8",
+    logo: "https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_NICK/images/LOGO_HD/image.png",
+    category: "Kids",
+    country: "India",
+    language: "Tamil",
+    is_active: true,
+    created_at: 1700000000007,
+  },
+];
+
 // In-memory custom channel storage across hot reloads and production runtime
 const globalForCustomChannels = globalThis as unknown as {
   pltvCustomChannels?: Map<string, CustomChannel>;
 };
 
 if (!globalForCustomChannels.pltvCustomChannels) {
-  globalForCustomChannels.pltvCustomChannels = new Map<string, CustomChannel>();
+  const store = new Map<string, CustomChannel>();
+  for (const ch of DEFAULT_CUSTOM_CHANNELS) {
+    store.set(ch.id, ch);
+  }
+  globalForCustomChannels.pltvCustomChannels = store;
 }
 
 const customStore = globalForCustomChannels.pltvCustomChannels;

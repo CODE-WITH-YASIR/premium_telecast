@@ -63,7 +63,32 @@ export function mapCategory(groupTitle?: string, channelName?: string): TamilCat
   ) {
     return "Religious";
   }
-  if (combined.includes("kid") || combined.includes("chithiram") || combined.includes("hungama") || combined.includes("disney") || combined.includes("bal bharat") || combined.includes("cartoon")) {
+  if (
+    combined.includes("kid") ||
+    combined.includes("chithiram") ||
+    combined.includes("chutti") ||
+    combined.includes("hungama") ||
+    combined.includes("disney") ||
+    combined.includes("bal bharat") ||
+    combined.includes("cartoon") ||
+    combined.includes("pogo") ||
+    combined.includes("nick") || // nickelodeon, nick jr, nickx
+    combined.includes("sonic") ||
+    combined.includes("discovery kids") ||
+    combined.includes("sony yay") ||
+    combined.includes("sonyyay") ||
+    combined.includes("yay!") ||
+    combined.includes("boomerang") ||
+    combined.includes("toonami") ||
+    combined.includes("baby tv") ||
+    combined.includes("tiny pop") ||
+    combined.includes("cbbc") ||
+    combined.includes("cbeebies") ||
+    combined.includes("jiimaan") ||
+    combined.includes("jeem") ||
+    combined.includes("kix") ||
+    combined.includes("animax")
+  ) {
     return "Kids";
   }
   if (combined.includes("sport") || combined.includes("cricket") || combined.includes("football") || combined.includes("dd sports")) {

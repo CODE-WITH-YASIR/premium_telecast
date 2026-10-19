@@ -9,11 +9,28 @@ import { AuthProvider } from "@/context/AuthContext";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://premium-telecast.vercel.app"),
   title: {
     default: "Premium Live TV — The Next-Gen Streaming Experience",
     template: "%s · Premium Live TV",
   },
   description: "Experience liquid-glass live IPTV television streaming with personal profiles, curated channels, and instantaneous playback.",
+  openGraph: {
+    title: "Premium Live TV — The Next-Gen Streaming Experience",
+    description: "Experience liquid-glass live IPTV television streaming with personal profiles, curated channels, and instantaneous playback.",
+    url: "https://premium-telecast.vercel.app",
+    siteName: "Premium Live TV",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Premium Live TV — The Next-Gen Streaming Experience",
+    description: "Experience liquid-glass live IPTV television streaming with personal profiles, curated channels, and instantaneous playback.",
+  },
+  alternates: {
+    canonical: "https://premium-telecast.vercel.app",
+  },
 };
 
 export const viewport: Viewport = {

@@ -1,5 +1,7 @@
 # Premium Live TV
 
+> **Live Deployment:** [https://premium-telecast.vercel.app](https://premium-telecast.vercel.app)
+
 A premium, dark-first IPTV streaming web app built on Next.js 15 (App Router)
 + TypeScript (strict) + Tailwind CSS + HLS.js. Uses real, configurable M3U
 playlist sources — no mock channels, no fake EPG, no invented metadata

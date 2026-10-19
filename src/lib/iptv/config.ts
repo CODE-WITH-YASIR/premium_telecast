@@ -37,6 +37,16 @@ const DEFAULT_SOURCES: PlaylistSource[] = [
     label: "IPTV-Org — All Channels",
     url: "https://iptv-org.github.io/iptv/index.m3u",
   },
+  {
+    id: "iptv-org-tamil",
+    label: "IPTV-Org — Tamil Language",
+    url: "https://iptv-org.github.io/iptv/languages/tam.m3u",
+  },
+  {
+    id: "iptv-org-kids",
+    label: "IPTV-Org — Kids Channels",
+    url: "https://iptv-org.github.io/iptv/categories/kids.m3u",
+  },
 ];
 
 const envSources = parseSourcesFromEnv(process.env.IPTV_PLAYLIST_SOURCES);
@@ -51,6 +61,6 @@ export const PLAYLIST_SOURCES: PlaylistSource[] = envSources.length > 0 ? envSou
 export const EPG_SOURCE_URL = process.env.NEXT_PUBLIC_EPG_URL || "";
 
 export const FETCH_TIMEOUT_MS = 12_000;
-export const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+export const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 export const AUTO_REFRESH_INTERVAL_MS = 60 * 1000; // 60 seconds
 export const HISTORY_LIMIT = 50;

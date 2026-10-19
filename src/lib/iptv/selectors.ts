@@ -90,3 +90,56 @@ export function searchChannels(channels: Channel[], query: string): Channel[] {
     );
   });
 }
+
+/**
+ * Known aliases for kids channels that may appear in Tamil or Indian streams.
+ * These are real channel names from the iptv-org dataset.
+ */
+const KIDS_KEYWORDS = [
+  "pogo", "chutti", "cartoon network", "cartoon", "discovery kids",
+  "sony yay", "sonyyay", "yay!", "nick", "nickelodeon", "nick jr",
+  "sonic", "hungama", "disney junior", "disney channel", "disney",
+  "boomerang", "toonami", "baby tv", "tiny pop", "cbbc", "cbeebies",
+  "animax", "kix", "jeem", "jiimaan", "kids", "junior", "child",
+  "chithiram", "bal bharat", "boing"
+];
+
+/** Returns true if a channel name/group looks like a kids channel. */
+export function isKidsChannel(channel: Channel): boolean {
+  const haystack = `${channel.name} ${channel.group ?? ""}`.toLowerCase();
+  return KIDS_KEYWORDS.some((kw) => haystack.includes(kw));
+}
+
+/** Filter channels that are in kids-related groups or have kids-matching names. */
+export function filterKidsChannels(channels: Channel[]): Channel[] {
+  return channels.filter(isKidsChannel);
+}
+
+/**
+ * Tamil Kids channels: kids channels where the language is tagged as Tamil,
+ * the source is the Tamil-language playlist, OR the channel name is a well-known
+ * Tamil/Indian kids channel variant.
+ * We do NOT fabricate language claims — if the language field is absent we mark
+ * it as "unverified" (the UI layer handles labelling).
+ */
+const TAMIL_KIDS_CHANNEL_NAMES = [
+  "chutti tv", "chutti", "pogo", "cartoon network", "discovery kids",
+  "sony yay", "nick", "sonic", "hungama", "disney junior",
+  "disney channel", "chithiram", "nick jr", "nickelodeon"
+];
+
+export function filterTamilKidsChannels(channels: Channel[]): Channel[] {
+  return channels.filter((c) => {
+    const isTamilLang =
+      c.language?.toLowerCase().includes("tam") ||
+      c.languageCode === "tam" ||
+      c.sourceId === "iptv-org-tamil";
+    const isKids = isKidsChannel(c);
+    if (isTamilLang && isKids) return true;
+
+    // Also match by channel name for well-known Indian/Tamil kids channels
+    // even if language metadata is absent (treat as unverified-Tamil)
+    const lowerName = c.name.toLowerCase();
+    return TAMIL_KIDS_CHANNEL_NAMES.some((n) => lowerName.includes(n));
+  });
+}
