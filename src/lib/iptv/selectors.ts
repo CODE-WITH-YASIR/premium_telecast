@@ -1,5 +1,6 @@
 import type { Channel } from "./types";
 import { slugify } from "./id";
+import { validatePogoOrChutti, filterStrictPogoAndChutti } from "./pogoChuttiValidator";
 
 export interface FacetCount {
   key: string; // slug, used in routes
@@ -110,36 +111,32 @@ export function isKidsChannel(channel: Channel): boolean {
   return KIDS_KEYWORDS.some((kw) => haystack.includes(kw));
 }
 
-/** Filter channels that are in kids-related groups or have kids-matching names. */
+/**
+ * Filter channels that are in kids-related groups or have kids-matching names.
+ * Enforces strict validation: unverified POGO or Chutti TV entries are filtered out.
+ */
 export function filterKidsChannels(channels: Channel[]): Channel[] {
-  return channels.filter(isKidsChannel);
+  const sanitized = filterStrictPogoAndChutti(channels);
+  return sanitized.filter(isKidsChannel);
 }
 
 /**
- * Tamil Kids channels: kids channels where the language is tagged as Tamil,
- * the source is the Tamil-language playlist, OR the channel name is a well-known
- * Tamil/Indian kids channel variant.
- * We do NOT fabricate language claims — if the language field is absent we mark
- * it as "unverified" (the UI layer handles labelling).
+ * Tamil Kids channels: kids channels where the language is genuinely verified as Tamil.
+ * Strictly enforces:
+ * 1. Must be genuinely kids-oriented.
+ * 2. Must be genuinely tagged as Tamil or from the verified Tamil source.
+ * 3. If POGO or Chutti TV, MUST pass strict original identity and Tamil audio verification.
+ *    Unverified candidates are strictly removed.
  */
-const TAMIL_KIDS_CHANNEL_NAMES = [
-  "chutti tv", "chutti", "pogo", "cartoon network", "discovery kids",
-  "sony yay", "nick", "sonic", "hungama", "disney junior",
-  "disney channel", "chithiram", "nick jr", "nickelodeon"
-];
-
 export function filterTamilKidsChannels(channels: Channel[]): Channel[] {
-  return channels.filter((c) => {
+  const sanitized = filterStrictPogoAndChutti(channels);
+  return sanitized.filter((c) => {
     const isTamilLang =
       c.language?.toLowerCase().includes("tam") ||
       c.languageCode === "tam" ||
       c.sourceId === "iptv-org-tamil";
     const isKids = isKidsChannel(c);
-    if (isTamilLang && isKids) return true;
-
-    // Also match by channel name for well-known Indian/Tamil kids channels
-    // even if language metadata is absent (treat as unverified-Tamil)
-    const lowerName = c.name.toLowerCase();
-    return TAMIL_KIDS_CHANNEL_NAMES.some((n) => lowerName.includes(n));
+    return isTamilLang && isKids;
   });
 }
+

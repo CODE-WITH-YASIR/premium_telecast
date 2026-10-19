@@ -216,9 +216,36 @@ export const TamilPlayer = memo(function TamilPlayer({
 
         hlsRef.current = hls;
 
+        const selectTamilAudio = () => {
+          if (!hls.audioTracks || hls.audioTracks.length === 0) return true;
+          const tracks = hls.audioTracks;
+          const tamilIdx = tracks.findIndex((t) => {
+            const lang = (t.lang || "").toLowerCase();
+            const name = (t.name || "").toLowerCase();
+            return lang === "tam" || lang === "ta" || lang.includes("tamil") || name.includes("tamil");
+          });
+          if (tamilIdx !== -1) {
+            if (hls.audioTrack !== tamilIdx) {
+              hls.audioTrack = tamilIdx;
+            }
+            return true;
+          }
+          if (tracks.length > 1) {
+            attemptFailover(`Multi-audio stream does not contain Tamil track: [${tracks.map(t => t.lang || t.name).join(", ")}]`);
+            return false;
+          }
+          return true;
+        };
+
         hls.on(HlsModule.Events.MANIFEST_PARSED, () => {
           if (currentSessionId !== sessionCountRef.current || !mountedRef.current) return;
+          if (!selectTamilAudio()) return;
           attemptAutoplay(video, currentSessionId);
+        });
+
+        hls.on(HlsModule.Events.AUDIO_TRACKS_UPDATED, () => {
+          if (currentSessionId !== sessionCountRef.current || !mountedRef.current) return;
+          selectTamilAudio();
         });
 
         hls.on(HlsModule.Events.ERROR, (_event, data) => {
@@ -259,8 +286,33 @@ export const TamilPlayer = memo(function TamilPlayer({
       if (canUseNativeHls) {
         video.src = url;
 
+        const checkNativeAudio = () => {
+          const nativeTracks = (video as unknown as { audioTracks?: Array<{ language: string; label: string; enabled: boolean }> }).audioTracks;
+          if (nativeTracks && nativeTracks.length > 0) {
+            let foundTamil = false;
+            for (let i = 0; i < nativeTracks.length; i++) {
+              const t = nativeTracks[i];
+              if (!t) continue;
+              const l = (t.language || "").toLowerCase();
+              const n = (t.label || "").toLowerCase();
+              if (l === "tam" || l === "ta" || l.includes("tamil") || n.includes("tamil")) {
+                t.enabled = true;
+                foundTamil = true;
+              } else if (nativeTracks.length > 1) {
+                t.enabled = false;
+              }
+            }
+            if (nativeTracks.length > 1 && !foundTamil) {
+              attemptFailover("Tamil audio track unavailable in native stream");
+              return false;
+            }
+          }
+          return true;
+        };
+
         const onLoaded = () => {
           if (currentSessionId !== sessionCountRef.current || !mountedRef.current) return;
+          if (!checkNativeAudio()) return;
           attemptAutoplay(video, currentSessionId);
         };
 

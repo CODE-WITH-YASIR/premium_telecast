@@ -23,9 +23,9 @@ import type { Channel } from "@/lib/iptv/types";
 
 /** Well-known Indian/Tamil kids channel names from iptv-org */
 const KNOWN_TAMIL_KIDS = new Set([
-  "chutti tv", "chutti", "chithiram", "pogo", "cartoon network",
-  "discovery kids", "sony yay", "nick", "sonic", "hungama",
-  "disney junior", "disney channel", "nick jr", "nickelodeon",
+  "chithiram", "cartoon network", "discovery kids", "sony yay",
+  "nick", "sonic", "hungama", "disney junior", "disney channel",
+  "nick jr", "nickelodeon",
 ]);
 
 type AudioStatus = "verified-tamil" | "probable-tamil" | "unverified";

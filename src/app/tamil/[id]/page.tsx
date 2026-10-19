@@ -23,6 +23,7 @@ import { TamilChannelCard } from "@/components/tamil/TamilChannelCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/States";
 import { formatRelativeTime } from "@/lib/utils";
+import { validatePogoOrChutti } from "@/lib/iptv/pogoChuttiValidator";
 import type { TamilChannel, TamilStream } from "@/lib/tamil/types";
 
 export default function TamilChannelDetailPage({
@@ -57,6 +58,17 @@ export default function TamilChannelDetailPage({
 
       const chanData = await chanRes.json();
       const stData = stRes.ok ? await stRes.json() : { streams: [] };
+
+      const pogoChuttiCheck = validatePogoOrChutti({
+        id: chanData.channel.id,
+        name: chanData.channel.name,
+        streamUrl: chanData.channel.source_url || "",
+        sourceId: "tamil",
+      });
+      if (pogoChuttiCheck.isTargetChannel && !pogoChuttiCheck.isVisible) {
+        setNotFound(true);
+        return;
+      }
 
       setChannel(chanData.channel);
       setStreams(

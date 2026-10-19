@@ -7,6 +7,7 @@ export type PlayerErrorCode =
   | "CORS_ERROR"
   | "UNSUPPORTED"
   | "AUTOPLAY_BLOCKED"
+  | "AUDIO_LANGUAGE_UNAVAILABLE"
   | "PLAYBACK_ERROR";
 
 export interface PlayerError {

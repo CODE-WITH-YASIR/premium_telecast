@@ -7,6 +7,7 @@ import { useChannel } from "@/hooks/useChannel";
 import { useChannels } from "@/hooks/useChannels";
 import { useHistory } from "@/hooks/useHistory";
 import { getSimilarChannels, getNextChannel } from "@/lib/iptv/selectors";
+import { validatePogoOrChutti } from "@/lib/iptv/pogoChuttiValidator";
 import { VideoPlayer } from "@/components/player/VideoPlayer";
 import { ChannelLogo } from "@/components/channel/ChannelLogo";
 import { FavoriteButton } from "@/components/channel/FavoriteButton";
@@ -71,7 +72,13 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
     );
   }
 
-  if (notFound || !channel) {
+  const isPogoOrChuttiHidden = useMemo(() => {
+    if (!channel) return false;
+    const res = validatePogoOrChutti(channel);
+    return res.isTargetChannel && !res.isVisible;
+  }, [channel]);
+
+  if (notFound || !channel || isPogoOrChuttiHidden) {
     return (
       <div className="page-container max-w-4xl pt-16">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-12 backdrop-blur-xl">
@@ -99,7 +106,16 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
 
       {/* Main Cinematic Video Player */}
       <div className="overflow-hidden rounded-3xl border border-white/15 bg-black shadow-2xl">
-        <VideoPlayer streamUrl={channel.streamUrl} title={channel.name} />
+        <VideoPlayer
+          streamUrl={channel.streamUrl}
+          title={channel.name}
+          channelId={channel.id}
+          isTamilOnlyChannel={
+            channel.language?.toLowerCase().includes("tam") ||
+            channel.languageCode === "tam" ||
+            channel.sourceId === "iptv-org-tamil"
+          }
+        />
       </div>
 
       {/* Mixed Content Warning Alert Banner */}

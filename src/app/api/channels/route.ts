@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCachedChannels } from "@/lib/iptv/serverCache";
 import { checkRateLimit, getClientKey } from "@/lib/rateLimit";
+import { filterStrictPogoAndChutti } from "@/lib/iptv/pogoChuttiValidator";
 
 export const dynamic = "force-dynamic"; // response body depends on server-side cache state, not build-time data
 export const revalidate = 0; // we manage freshness ourselves via serverCache's own TTL
@@ -62,10 +63,11 @@ export async function GET(request: Request) {
     }
 
     const mergedChannels = [...customChannelsList, ...result.channels];
+    const sanitizedChannels = filterStrictPogoAndChutti(mergedChannels);
 
     return NextResponse.json(
       {
-        channels: mergedChannels,
+        channels: sanitizedChannels,
         lastUpdated: result.fetchedAt,
         sourceResults: result.sourceResults,
         error: null,

@@ -12,28 +12,6 @@ export interface CustomChannel {
 
 export const DEFAULT_CUSTOM_CHANNELS: CustomChannel[] = [
   {
-    id: "custom_chutti_tv",
-    name: "Chutti TV",
-    stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_hd_abr/index.m3u8",
-    logo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/87/Chutti_TV_logo.png/220px-Chutti_TV_logo.png",
-    category: "Kids",
-    country: "India",
-    language: "Tamil",
-    is_active: true,
-    created_at: 1700000000000,
-  },
-  {
-    id: "custom_pogo_tv",
-    name: "POGO TV",
-    stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_sd_abr/index.m3u8",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pogo_2022.svg/330px-Pogo_2022.svg.png",
-    category: "Kids",
-    country: "India",
-    language: "Tamil",
-    is_active: true,
-    created_at: 1700000000001,
-  },
-  {
     id: "custom_cartoon_network",
     name: "Cartoon Network India",
     stream_url: "https://drk6xq0vhn.gpcdn.net/live/cn_hd_abr/index.m3u8",

@@ -45,12 +45,49 @@ interface DiagnosticInfo {
 interface VideoPlayerProps {
   streamUrl: string;
   title: string;
+  channelId?: string;
+  isTamilOnlyChannel?: boolean;
   onStatusChange?: (status: PlayerStatus) => void;
+}
+
+function selectTamilAudioTrack(
+  hls: Hls,
+  strictTamilOnly: boolean
+): { success: boolean; reason?: string } {
+  if (!hls.audioTracks || hls.audioTracks.length === 0) {
+    return { success: true };
+  }
+
+  const tracks = hls.audioTracks;
+  const tamilIndex = tracks.findIndex((t) => {
+    const lang = (t.lang || "").toLowerCase();
+    const name = (t.name || "").toLowerCase();
+    return lang === "tam" || lang === "ta" || lang.includes("tamil") || name.includes("tamil");
+  });
+
+  if (tamilIndex !== -1) {
+    if (hls.audioTrack !== tamilIndex) {
+      hls.audioTrack = tamilIndex;
+    }
+    return { success: true };
+  }
+
+  // If there are multiple audio tracks and this channel strictly requires Tamil audio:
+  if (strictTamilOnly && tracks.length > 1) {
+    return {
+      success: false,
+      reason: `Available audio tracks [${tracks.map((t) => t.lang || t.name).join(", ")}] do not include Tamil.`,
+    };
+  }
+
+  return { success: true };
 }
 
 export const VideoPlayer = memo(function VideoPlayer({
   streamUrl,
   title,
+  channelId,
+  isTamilOnlyChannel,
   onStatusChange,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -156,6 +193,13 @@ export const VideoPlayer = memo(function VideoPlayer({
       const video = videoRef.current;
       if (!video || !mountedRef.current) return;
 
+      const isTargetStrictTamil = Boolean(
+        isTamilOnlyChannel ||
+        title.toLowerCase().includes("chutti") ||
+        title.toLowerCase().includes("pogo") ||
+        (channelId && (channelId.toLowerCase().includes("chutti") || channelId.toLowerCase().includes("pogo")))
+      );
+
       // 1. Initial validation
       const validationError = validateStreamUrl(url);
       if (validationError) {
@@ -213,10 +257,35 @@ export const VideoPlayer = memo(function VideoPlayer({
 
         hlsRef.current = hls;
 
+        const applyAudioSelection = () => {
+          const audioCheck = selectTamilAudioTrack(hls, isTargetStrictTamil);
+          if (!audioCheck.success) {
+            try {
+              hls.stopLoad();
+              video.pause();
+            } catch {
+              // ignore
+            }
+            safeSetStatus("error", {
+              code: "AUDIO_LANGUAGE_UNAVAILABLE",
+              message: "Tamil audio track is unavailable for this broadcast. Silent playback of non-Tamil audio is disabled.",
+              diagnostic: audioCheck.reason,
+            });
+            return false;
+          }
+          return true;
+        };
+
         hls.on(HlsModule.Events.MANIFEST_PARSED, () => {
           if (currentSessionId !== sessionCountRef.current || !mountedRef.current) return;
+          if (!applyAudioSelection()) return;
           setIsReconnecting(false);
           attemptAutoplay(video, currentSessionId);
+        });
+
+        hls.on(HlsModule.Events.AUDIO_TRACKS_UPDATED, () => {
+          if (currentSessionId !== sessionCountRef.current || !mountedRef.current) return;
+          applyAudioSelection();
         });
 
         hls.on(HlsModule.Events.ERROR, (_event, data) => {
@@ -307,8 +376,37 @@ export const VideoPlayer = memo(function VideoPlayer({
         setDiagnosticInfo((prev) => ({ ...prev, engine: "native-hls", streamUrl: url }));
         video.src = url;
 
+        const checkNativeAudio = () => {
+          const nativeTracks = (video as unknown as { audioTracks?: Array<{ language: string; label: string; enabled: boolean }> }).audioTracks;
+          if (nativeTracks && nativeTracks.length > 0) {
+            let foundTamil = false;
+            for (let i = 0; i < nativeTracks.length; i++) {
+              const t = nativeTracks[i];
+              if (!t) continue;
+              const l = (t.language || "").toLowerCase();
+              const n = (t.label || "").toLowerCase();
+              if (l === "tam" || l === "ta" || l.includes("tamil") || n.includes("tamil")) {
+                t.enabled = true;
+                foundTamil = true;
+              } else if (nativeTracks.length > 1) {
+                t.enabled = false;
+              }
+            }
+            if (isTargetStrictTamil && nativeTracks.length > 1 && !foundTamil) {
+              video.pause();
+              safeSetStatus("error", {
+                code: "AUDIO_LANGUAGE_UNAVAILABLE",
+                message: "Tamil audio track is unavailable for this broadcast. Silent playback of non-Tamil audio is disabled.",
+              });
+              return false;
+            }
+          }
+          return true;
+        };
+
         const onLoaded = () => {
           if (currentSessionId !== sessionCountRef.current || !mountedRef.current) return;
+          if (!checkNativeAudio()) return;
           setIsReconnecting(false);
           attemptAutoplay(video, currentSessionId);
         };
@@ -364,7 +462,7 @@ export const VideoPlayer = memo(function VideoPlayer({
       );
       video.load();
     },
-    [safeSetStatus, attemptAutoplay]
+    [safeSetStatus, attemptAutoplay, isTamilOnlyChannel, channelId, title]
   );
 
   // Stream loading manager with strict session synchronization
